@@ -1,69 +1,48 @@
-# Welcome to your Lovable project
+# Welcome to my Portfolio V1.0
 
-## Project info
+## Personal Links
+- **Personal Website**: [mahim-masrafi.work](https://mahim-masrafi.work)
+- **GitHub Repository**: [ThisIsMahim/My-portfolio-V1.0](https://github.com/ThisIsMahim/My-portfolio-V1.0)
 
-**URL**: https://lovable.dev/projects/f58242fc-6bbf-4724-8373-8e7c47790d40
+## About This Project
 
-## How can I edit this code?
+This is my personal portfolio website where I showcase my work, skills, and experience as a developer. The website is designed to be modern, responsive, and user-friendly, providing visitors with an engaging experience to learn more about my professional journey and projects.
 
-There are several ways of editing your application.
+## Features
 
-**Use Lovable**
+- 🎨 Modern and clean design
+- 📱 Fully responsive layout
+- 🚀 Fast loading and optimized performance
+- 💼 Project showcase section
+- 📝 About me section
+- 📫 Contact form
+- 🌙 Dark/Light mode toggle
+- 🎯 Skills and expertise display
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/f58242fc-6bbf-4724-8373-8e7c47790d40) and start prompting.
+## Technologies Used
 
-Changes made via Lovable will be committed automatically to this repo.
+This project is built with modern web technologies:
 
-**Use your preferred IDE**
+- **Vite** - Next Generation Frontend Tooling
+- **React** - A JavaScript library for building user interfaces
+- **TypeScript** - For type-safe code
+- **Tailwind CSS** - For utility-first styling
+- **shadcn/ui** - For beautiful and accessible UI components
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Project Structure
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+My-portfolio-V1.0/
+├── src/
+│   ├── components/     # Reusable UI components
+│   ├── pages/         # Page components
+│   ├── styles/        # Global styles and Tailwind config
+│   ├── assets/        # Images, fonts, and other static files
+│   └── utils/         # Utility functions and helpers
+├── public/           # Public assets
+└── package.json      # Project dependencies and scripts
 ```
 
-**Edit a file directly in GitHub**
+## Contact
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/f58242fc-6bbf-4724-8373-8e7c47790d40) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+Feel free to reach out to me through my [personal website](https://mahim-masrafi.work) or connect with me on GitHub [@ThisIsMahim](https://github.com/ThisIsMahim).
