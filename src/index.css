@@ -1,0 +1,110 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Narnoor:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+
+    --card: 0 0% 12%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 0 0% 0%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 43 47% 61%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 70%;
+
+    --accent: 43 47% 61%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 43 47% 61%;
+
+    --radius: 0.5rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-narnoor overflow-x-hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor styling */
+  .custom-cursor {
+    @apply fixed w-8 h-8 rounded-full mix-blend-difference pointer-events-none z-50;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease;
+  }
+
+  .cursor-default {
+    @apply bg-gold bg-opacity-30 border border-gold;
+  }
+
+  .cursor-hover {
+    @apply bg-gold scale-150;
+  }
+}
+
+@layer utilities {
+  .font-narnoor {
+    font-family: 'Narnoor', serif;
+  }
+
+  .page-transition-enter {
+    @apply opacity-0;
+  }
+
+  .page-transition-enter-active {
+    @apply opacity-100 transition-opacity duration-300;
+  }
+
+  .page-transition-exit {
+    @apply opacity-100;
+  }
+
+  .page-transition-exit-active {
+    @apply opacity-0 transition-opacity duration-300;
+  }
+
+  .hover-gold {
+    @apply transition-colors duration-300 hover:text-gold;
+  }
+
+  .gold-glow {
+    box-shadow: 0 0 15px rgba(203, 177, 106, 0.5);
+  }
+
+  .hover-gold-glow:hover {
+    box-shadow: 0 0 15px rgba(203, 177, 106, 0.5);
+  }
+
+  .smooth-transition {
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  .section-padding {
+    @apply px-6 py-16 md:px-12 md:py-24;
+  }
+}
