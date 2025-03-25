@@ -23,8 +23,8 @@ const socialLinks = [
   {
     platform: 'Instagram',
     icon: Instagram,
-    url: 'https://instagram.com/yourusername',
-    handle: '@yourusername'
+    url: 'https://www.instagram.com/cm_mahim_masrafi_/',
+    handle: '@cm_mahim_masrafi_'
   }
 ];
 

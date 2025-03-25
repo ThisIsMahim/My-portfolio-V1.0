@@ -12,7 +12,7 @@ const projectsData = [
     id: 1,
     title: 'ResumeGuru - AI-Powered Resume Builder',
     description: 'A modern resume builder leveraging AI to transform the career journey. Led development of front-end and back-end integration. Built a secure and user-friendly platform with real-time preview and multiformat export.',
-    image: '/assets/projects/resumeguru.png',
+    image: '/assets/projects/resumeguru.webp',
     link: 'https://resume-guru.vercel.app',
     github: 'https://github.com/ThisIsMahim/Resume-guru'
   },
@@ -20,7 +20,7 @@ const projectsData = [
     id: 2,
     title: 'UPP Campus - Modern Campus Social Platform',
     description: 'A social platform for university students to connect and share updates. Developed a seamless user experience with responsive design. Created a feature-rich platform with real-time notifications and user profiles.',
-    image: '/assets/projects/uppcampus.png',
+    image: '/assets/projects/uppcampus.webp',
     link: 'https://upp-campus.vercel.app',
     github: 'https://github.com/ThisIsMahim/Upp-campus'
   },
@@ -28,7 +28,7 @@ const projectsData = [
     id: 3,
     title: 'FaceFusion - Advanced Facial Recognition',
     description: 'A sophisticated web app using machine learning for real-time facial recognition and emotion analysis. Integrated TensorFlow.js for real-time face detection and emotion analysis. Engineered secure biometric authentication with anti-spoofing measures.',
-    image: '/assets/projects/facefusion.png',
+    image: '/assets/projects/facefusion.webp',
     link: 'https://face-recognition-app-opal.vercel.app/',
     github: 'https://github.com/ThisIsMahim/Face-Recognition-App'
   },
@@ -36,41 +36,23 @@ const projectsData = [
     id: 4,
     title: 'Life on Titan - Interactive Educational App',
     description: 'An educational app exploring the potential for life on Titan, with engaging visuals and AI-generated content. Created interactive 3D models using Three.js. Enhanced learning experience with AI-driven narration and simulations.',
-    image: '/assets/projects/titan.png',
+    image: '/assets/projects/titan.webp',
     link: 'https://life-on-titan.vercel.app',
     github: 'https://github.com/ThisIsMahim/life-on-titan'
   }
 ];
 
 const Projects = () => {
-  const [isLoading, setIsLoading] = useState(true);
   const [animate, setAnimate] = useState(false);
 
   useEffect(() => {
-    // Simulate loading of resources
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-      setAnimate(true);
-    }, 500);
-
-    return () => clearTimeout(timer);
+    setAnimate(true);
   }, []);
-
-  if (isLoading) {
-    return (
-      <AnimatedBackground>
-        <div className="h-screen w-full flex items-center justify-center">
-          <div className="text-gold text-2xl animate-pulse">Loading Projects...</div>
-        </div>
-      </AnimatedBackground>
-    );
-  }
 
   return (
     <AnimatedBackground>
-        <MouseTrail />
+      <MouseTrail />
       <div className="min-h-screen pt-32">
-      
         <Navbar />
 
         <div className={`pt-28 pb-16 px-6 md:px-12 max-w-7xl mx-auto ${animate ? 'animate-fade-in' : 'opacity-0'}`}>

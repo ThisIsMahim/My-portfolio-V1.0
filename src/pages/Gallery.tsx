@@ -10,49 +10,49 @@ import { AnimatedBackground } from '../components/AnimatedBackground';
 const galleryData = [
   {
     id: 1,
-    image: '/assets/gallery/gallery7.jpg',
+    image: '/assets/gallery/gallery7.webp',
     alt: 'Portrait photography',
     title: 'Portrait Study'
   },
   {
     id: 2,
-    image: '/assets/gallery/gallery2.jpg',
+    image: '/assets/gallery/gallery2.webp',
     alt: 'Nature photography',
     title: 'Sunflower valley'
   },
   {
     id: 3,
-    image: '/assets/gallery/gallery8.jpg',
+    image: '/assets/gallery/gallery8.webp',
     alt: 'Street photography',
     title: 'Urban Life'
   },
   {
     id: 4,
-    image: '/assets/gallery/gallery4.jpg',
+    image: '/assets/gallery/gallery4.webp',
     alt: 'village photography',
     title: 'The great catch'
   },
   {
     id: 5,
-    image: '/assets/gallery/gallery3.jpg',
+    image: '/assets/gallery/gallery3.webp',
     alt: 'river photography',
     title: 'The boat'
   },
   {
     id: 6,
-    image: '/assets/gallery/gallery1.jpg',
+    image: '/assets/gallery/gallery1.webp',
     alt: 'Nature photography',
     title: 'The paddy field'
   },
   {
     id: 7,
-    image: '/assets/gallery/gallery6.jpg',
+    image: '/assets/gallery/gallery6.webp',
     alt: 'Night photography',
     title: 'The Light of knowledge'
   },
   {
     id: 8,
-    image: '/assets/gallery/gallery5.jpg',
+    image: '/assets/gallery/gallery5.webp',
     alt: 'Star photography',
     title: 'Looking for the stars'
   }
@@ -65,6 +65,8 @@ interface SelectedImage {
 }
 
 const GalleryModal = ({ image, onClose }: { image: SelectedImage; onClose: () => void }) => {
+  const [modalImageLoaded, setModalImageLoaded] = useState(false);
+  
   return (
     <div 
       className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black bg-opacity-80 backdrop-blur-sm"
@@ -82,10 +84,16 @@ const GalleryModal = ({ image, onClose }: { image: SelectedImage; onClose: () =>
         </button>
         
         <div className="relative aspect-[16/9] overflow-hidden rounded-lg">
+          {!modalImageLoaded && (
+            <div className="absolute inset-0 bg-gold/10 animate-pulse rounded-lg" />
+          )}
           <img
             src={image.image}
             alt={image.alt}
-            className="w-full h-full object-contain"
+            className={`w-full h-full object-contain transition-opacity duration-300 ${
+              modalImageLoaded ? 'opacity-100' : 'opacity-0'
+            }`}
+            onLoad={() => setModalImageLoaded(true)}
           />
         </div>
         
@@ -99,18 +107,11 @@ const GalleryModal = ({ image, onClose }: { image: SelectedImage; onClose: () =>
 };
 
 const Gallery = () => {
-  const [isLoading, setIsLoading] = useState(true);
   const [animate, setAnimate] = useState(false);
   const [selectedImage, setSelectedImage] = useState<SelectedImage | null>(null);
 
   useEffect(() => {
-    // Simulate loading of resources
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-      setAnimate(true);
-    }, 500);
-
-    return () => clearTimeout(timer);
+    setAnimate(true);
   }, []);
 
   const handleImageClick = (item: SelectedImage) => {
@@ -120,16 +121,6 @@ const Gallery = () => {
   const handleCloseModal = () => {
     setSelectedImage(null);
   };
-
-  if (isLoading) {
-    return (
-      <AnimatedBackground>
-        <div className="h-screen w-full flex items-center justify-center">
-          <div className="text-gold text-2xl animate-pulse">Loading Gallery...</div>
-        </div>
-      </AnimatedBackground>
-    );
-  }
 
   return (
     <AnimatedBackground>

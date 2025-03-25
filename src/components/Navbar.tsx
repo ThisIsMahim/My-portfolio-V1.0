@@ -38,7 +38,7 @@ const Navbar = () => {
 
         <Link to="/" className="flex flex-col items-center group">
           <div className="text-2xl font-bold text-gold mb-1 transform group-hover:scale-110 transition-transform">
-            <img src="/assets/logo-transparent.png" alt="Logo" className="w-20 h-20" />
+            <img src="/assets/logo-transparent.webp" alt="Logo" className="w-20 h-20" />
           </div>
           <div className="text-gold -mt-4 text-lg font-medium tracking-wider group-hover:opacity-80 transition-opacity">
             Mahim Masrafi

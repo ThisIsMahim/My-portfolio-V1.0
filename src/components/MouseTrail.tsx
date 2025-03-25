@@ -5,8 +5,8 @@ interface TrailSegment {
   ref: React.RefObject<HTMLDivElement>;
 }
 
-const TRAIL_LENGTH = 12; // Number of trail segments
-const TRAIL_DELAY = 0.05; // Delay between each trail segment
+const TRAIL_LENGTH = 8; // Reduced from 12 to 8
+const TRAIL_DELAY = 0.08; // Increased from 0.05 to 0.08
 const CURSOR_SIZE = {
   default: 25,
   hover: 40,
@@ -22,6 +22,7 @@ const MouseTrail = () => {
   const mousePosition = useRef({ x: -100, y: -100 });
   const movementTimeout = useRef<NodeJS.Timeout>();
   const animationFrameId = useRef<number>();
+  const lastUpdateTime = useRef(0);
 
   // Initialize trail segments
   useEffect(() => {
@@ -37,7 +38,6 @@ const MouseTrail = () => {
   // Handle mouse movement
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      // Use clientX/Y for viewport-relative coordinates and add scroll position
       const scrollX = window.scrollX || window.pageXOffset;
       const scrollY = window.scrollY || window.pageYOffset;
       
@@ -46,14 +46,18 @@ const MouseTrail = () => {
       
       mousePosition.current = { x, y };
 
-      // Update cursor position with fixed positioning
-      if (cursorRef.current) {
-        gsap.to(cursorRef.current, {
-          x: e.clientX, // Use clientX for viewport-relative positioning
-          y: e.clientY, // Use clientY for viewport-relative positioning
-          duration: 0.8,
-          ease: "power2.out"
-        });
+      // Throttle cursor updates
+      const now = Date.now();
+      if (now - lastUpdateTime.current > 16) { // ~60fps
+        if (cursorRef.current) {
+          gsap.to(cursorRef.current, {
+            x: e.clientX,
+            y: e.clientY,
+            duration: 0.2, // Reduced from 0.8
+            ease: "power2.out"
+          });
+        }
+        lastUpdateTime.current = now;
       }
 
       setIsMoving(true);
@@ -63,7 +67,7 @@ const MouseTrail = () => {
 
       movementTimeout.current = setTimeout(() => {
         setIsMoving(false);
-      }, 300);
+      }, 100); // Reduced from 300
     };
 
     const handleMouseOver = (e: MouseEvent) => {
@@ -76,24 +80,15 @@ const MouseTrail = () => {
         target.classList.contains('hoverable')
       );
 
-      setIsHovering(isHoverable);
-      
-      if (isHoverable) {
+      if (isHoverable !== isHovering) { // Only update if state actually changes
+        setIsHovering(isHoverable);
+        
         gsap.to(cursorRef.current, {
-          width: CURSOR_SIZE.hover,
-          height: CURSOR_SIZE.hover,
-          backgroundColor: 'rgba(212, 175, 55, 0.2)',
+          width: isHoverable ? CURSOR_SIZE.hover : CURSOR_SIZE.default,
+          height: isHoverable ? CURSOR_SIZE.hover : CURSOR_SIZE.default,
+          backgroundColor: isHoverable ? 'rgba(212, 175, 55, 0.2)' : 'transparent',
           borderColor: '#D4AF37',
-          duration: 0.3,
-          ease: "power2.out"
-        });
-      } else {
-        gsap.to(cursorRef.current, {
-          width: CURSOR_SIZE.default,
-          height: CURSOR_SIZE.default,
-          backgroundColor: 'transparent',
-          borderColor: '#D4AF37',
-          duration: 0.3,
+          duration: 0.2, // Reduced from 0.3
           ease: "power2.out"
         });
       }
@@ -101,14 +96,13 @@ const MouseTrail = () => {
 
     const handleScroll = () => {
       if (cursorRef.current) {
-        // Update cursor position on scroll
         const scrollX = window.scrollX || window.pageXOffset;
         const scrollY = window.scrollY || window.pageYOffset;
         
         gsap.to(cursorRef.current, {
           x: mousePosition.current.x - scrollX,
           y: mousePosition.current.y - scrollY,
-          duration: 0.8,
+          duration: 0.2, // Reduced from 0.8
           ease: "power2.out"
         });
       }
@@ -126,7 +120,7 @@ const MouseTrail = () => {
         clearTimeout(movementTimeout.current);
       }
     };
-  }, []);
+  }, [isHovering]); // Added isHovering to dependencies
 
   // Handle mouse down/up events
   useEffect(() => {
@@ -163,7 +157,12 @@ const MouseTrail = () => {
 
   // Update trail segments
   useEffect(() => {
+    let lastTrailUpdate = 0;
+    
     const updateTrail = () => {
+      const now = Date.now();
+      if (now - lastTrailUpdate < 16) return; // Limit to ~60fps
+      
       const scrollX = window.scrollX || window.pageXOffset;
       const scrollY = window.scrollY || window.pageYOffset;
 
@@ -176,28 +175,28 @@ const MouseTrail = () => {
         gsap.to(segment.ref.current, {
           x: mousePosition.current.x - scrollX,
           y: mousePosition.current.y - scrollY,
-          duration: 0.3,
+          duration: 0.2, // Reduced from 0.3
           delay,
-          opacity: (isMoving || isMouseDown) ? progress * 0.6 : 0,
-          scale: isMouseDown ? 1.2 - progress * 0.4 : 1 - progress * 0.3,
-          ease: "power2.out",
-          boxShadow: (isMoving || isMouseDown) 
-            ? `0 0 ${10 * progress}px rgba(212, 175, 55, ${0.3 * progress})`
-            : 'none'
+          opacity: (isMoving || isMouseDown) ? progress * 0.4 : 0, // Reduced opacity
+          scale: isMouseDown ? 1.1 - progress * 0.3 : 1 - progress * 0.2, // Reduced scale effect
+          ease: "power2.out"
         });
       });
+      
+      lastTrailUpdate = now;
     };
 
     const animateTrail = () => {
       updateTrail();
       if (isMoving || isMouseDown) {
         animationFrameId.current = requestAnimationFrame(animateTrail);
-      } else if (animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current);
       }
     };
 
-    animateTrail();
+    if (isMoving || isMouseDown) {
+      animateTrail();
+    }
+
     return () => {
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
@@ -207,12 +206,11 @@ const MouseTrail = () => {
 
   return (
     <>
-      {/* Trail segments */}
       {trailRefs.current.map((segment, index) => (
         <div
           key={index}
           ref={segment.ref}
-          className="fixed w-3 h-3 rounded-full bg-gold pointer-events-none z-40"
+          className="fixed w-2 h-2 rounded-full bg-gold pointer-events-none z-40 opacity-0"
           style={{
             transform: 'translate(-50%, -50%)',
             backgroundColor: 'rgba(212, 175, 55, 0.3)'
@@ -220,7 +218,6 @@ const MouseTrail = () => {
         />
       ))}
 
-      {/* Custom cursor */}
       <div
         ref={cursorRef}
         className="fixed pointer-events-none z-50"
@@ -230,8 +227,7 @@ const MouseTrail = () => {
           transform: 'translate(-50%, -50%)',
           border: '2px solid #D4AF37',
           borderRadius: '50%',
-          transition: 'width 0.2s, height 0.2s',
-          willChange: 'transform'
+          willChange: 'transform, width, height'
         }}
       >
         <div 

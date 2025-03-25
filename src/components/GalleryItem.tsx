@@ -1,63 +1,49 @@
-
 import { useState } from 'react';
+import Skeleton from './Skeleton';
 
 interface GalleryItemProps {
   image: string;
   alt: string;
-  title?: string;
-  aspectRatio?: string;
+  title: string;
 }
 
-const GalleryItem: React.FC<GalleryItemProps> = ({
-  image,
-  alt,
-  title,
-  aspectRatio = 'aspect-square'
-}) => {
-  const [isHovered, setIsHovered] = useState(false);
-  
+const GalleryItem = ({ image, alt, title }: GalleryItemProps) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+
   return (
     <div 
-      className={`relative overflow-hidden rounded-xl hover-gold-glow group hoverable ${aspectRatio}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className="relative group overflow-hidden rounded-lg aspect-square"
+      style={{
+        transform: 'translateZ(0)',
+        willChange: 'transform',
+      }}
     >
-      <img 
-        src={image} 
-        alt={alt} 
-        className="w-full h-full object-cover smooth-transition"
-        style={{
-          transform: isHovered ? 'scale(1.05)' : 'scale(1)',
-        }}
+      {!imageLoaded && (
+        <Skeleton className="absolute inset-0" />
+      )}
+      <img
+        src={image}
+        alt={alt}
+        className={`w-full h-full object-cover transition-transform duration-200 group-hover:scale-105 ${
+          imageLoaded ? 'opacity-100' : 'opacity-0'
+        }`}
+        style={{ transform: 'translateZ(0)' }}
+        onLoad={() => setImageLoaded(true)}
       />
-      
-      {/* Overlay */}
       <div 
-        className="absolute inset-0 bg-black smooth-transition flex items-end p-4"
-        style={{
-          opacity: isHovered ? 0.7 : 0,
+        className="absolute inset-0 bg-black transition-opacity duration-200 group-hover:bg-opacity-50"
+        style={{ 
+          transform: 'translateZ(0)',
+          backgroundColor: 'rgba(0, 0, 0, 0)',
         }}
       >
-        {title && (
-          <div 
-            className="text-gold text-sm font-medium transform smooth-transition"
-            style={{
-              transform: isHovered ? 'translateY(0)' : 'translateY(10px)',
-              opacity: isHovered ? 1 : 0,
-            }}
-          >
-            {title}
-          </div>
-        )}
+        <div 
+          className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+          style={{ transform: 'translateZ(0)' }}
+        >
+          <h3 className="text-gold text-lg font-medium text-center px-4">{title}</h3>
+        </div>
       </div>
-      
-      {/* Border overlay for hover effect */}
-      <div 
-        className="absolute inset-0 border-2 border-gold rounded-xl smooth-transition"
-        style={{
-          opacity: isHovered ? 0.6 : 0,
-        }}
-      ></div>
     </div>
   );
 };

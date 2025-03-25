@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ExternalLink, Github } from 'lucide-react';
+import Skeleton from './Skeleton';
 
 interface ProjectCardProps {
   title: string;
@@ -9,75 +10,57 @@ interface ProjectCardProps {
   github: string;
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({
-  title,
-  description,
-  image,
-  link,
-  github
-}) => {
-  const [isHovered, setIsHovered] = useState(false);
-  
+const ProjectCard = ({ title, description, image, link, github }: ProjectCardProps) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+
   return (
     <div 
-      className="bg-darkGray rounded-xl overflow-hidden hover-gold-glow group smooth-transition hoverable flex flex-col"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className="bg-black bg-opacity-20 backdrop-blur-sm rounded-xl overflow-hidden border border-gold border-opacity-20"
       style={{
-        transform: isHovered ? 'scale(1.02)' : 'scale(1)',
+        transform: 'translateZ(0)', // Hardware acceleration
+        willChange: 'transform', // Optimize for animations
       }}
     >
-      {/* Project image */}
-      <div className="relative h-48 w-full overflow-hidden">
-        <img 
-          src={image} 
-          alt={title} 
-          className="w-full h-full object-cover smooth-transition"
-          style={{
-            transform: isHovered ? 'scale(1.05)' : 'scale(1)',
-          }}
-        />
-        <div 
-          className="absolute inset-0 bg-gradient-to-b from-transparent to-darkGray/80"
+      <div className="relative aspect-video">
+        {!imageLoaded && (
+          <Skeleton className="absolute inset-0" />
+        )}
+        <img
+          src={image}
+          alt={title}
+          className={`w-full h-full object-cover transition-opacity duration-200 ${
+            imageLoaded ? 'opacity-100' : 'opacity-0'
+          }`}
+          style={{ transform: 'translateZ(0)' }}
+          onLoad={() => setImageLoaded(true)}
         />
       </div>
       
-      {/* Content section */}
-      <div className="relative flex-1 p-6 bg-darkGray">
-        {/* Title */}
-        <h3 className="text-gold text-xl font-medium mb-3">
-          {title}
-        </h3>
-
-        {/* Description */}
-        <p className="text-white/80 text-sm mb-6 line-clamp-3">
-          {description}
-        </p>
+      <div className="p-6">
+        <h3 className="text-gold text-xl font-medium mb-2">{title}</h3>
+        <p className="text-gold text-opacity-80 text-sm mb-4">{description}</p>
         
-        {/* Action buttons */}
-        <div className="flex gap-3 mt-auto">
-          {github && (
-            <a 
-              href={github} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-flex items-center text-gold text-sm border border-gold/40 rounded-full py-1.5 px-4 hover:bg-gold/10 hover:border-gold smooth-transition hoverable"
-            >
-              <Github size={14} className="mr-2" />
-              <span>GitHub</span>
-            </a>
-          )}
-          {link && (
-            <a 
-              href={link} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-flex items-center text-gold text-sm border border-gold/40 rounded-full py-1.5 px-4 hover:bg-gold/10 hover:border-gold smooth-transition hoverable"
-            >
-              <span>Live Demo</span>
-              <ExternalLink size={14} className="ml-2" />
-            </a>
-          )}
+        <div className="flex gap-4">
+          <a
+            href={github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-gold text-opacity-80 hover:text-opacity-100 transition-colors duration-200 hoverable"
+            style={{ transform: 'translateZ(0)' }}
+          >
+            <Github size={20} />
+            <span>GitHub</span>
+          </a>
+          <a
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-gold text-opacity-80 hover:text-opacity-100 transition-colors duration-200 hoverable"
+            style={{ transform: 'translateZ(0)' }}
+          >
+            <ExternalLink size={20} />
+            <span>Live Demo</span>
+          </a>
         </div>
       </div>
     </div>

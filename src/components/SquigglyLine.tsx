@@ -29,8 +29,8 @@ const SquigglyLine: React.FC<SquigglyLineProps> = ({
   const midY = (startY + endY) / 2;
   
   // Calculate perpendicular offset for the control points
-  const perpX = -Math.sin(angle) * (length / 5);
-  const perpY = Math.cos(angle) * (length / 5);
+  const perpX = -Math.sin(angle) * (length / 6); // Slightly reduced for smoother curves
+  const perpY = Math.cos(angle) * (length / 6);
   
   // Define the path with multiple curves for a squiggly effect
   const path = `
@@ -41,14 +41,16 @@ const SquigglyLine: React.FC<SquigglyLineProps> = ({
 
   return (
     <svg
-      className="absolute pointer-events-none z-10"
+      className="absolute pointer-events-none"
       style={{
         top: 0,
         left: 0,
         width: '100%',
         height: '100%',
         overflow: 'visible',
-        animation: animated ? 'squiggle 3s ease-in-out infinite' : 'none',
+        zIndex: 50,
+        filter: 'drop-shadow(0 0 2px rgba(203, 177, 106, 0.3))',
+        animation: animated ? 'float 3s ease-in-out infinite' : 'none',
         animationDelay: `${delay}s`
       }}
     >
@@ -57,10 +59,11 @@ const SquigglyLine: React.FC<SquigglyLineProps> = ({
         stroke={color}
         strokeWidth={width}
         fill="none"
+        strokeLinecap="round"
         strokeDasharray="200"
         strokeDashoffset="200"
         style={{
-          animation: 'dash 2s linear forwards',
+          animation: 'dash 1.5s ease-out forwards',
           animationDelay: `${delay + 0.3}s`
         }}
       />
@@ -68,6 +71,15 @@ const SquigglyLine: React.FC<SquigglyLineProps> = ({
         @keyframes dash {
           to {
             stroke-dashoffset: 0;
+          }
+        }
+        
+        @keyframes float {
+          0%, 100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-2px);
           }
         }
       `}</style>

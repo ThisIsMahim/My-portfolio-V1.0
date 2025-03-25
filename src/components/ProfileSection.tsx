@@ -1,16 +1,50 @@
 import { useState, useRef, useEffect } from 'react';
 import SquigglyLine from './SquigglyLine';
 
-const coderImage = '/assets/coder-profile.png';
-const photographerImage = '/assets/photographer-profile.png';
-const defaultImage = '/assets/default-profile.png';
+const coderImage = '/assets/coder-profile.webp';
+const photographerImage = '/assets/photographer-profile.webp';
+const defaultImage = '/assets/default-profile.webp';
 
 const ProfileSection = () => {
   const [hoverState, setHoverState] = useState<'none' | 'coder' | 'photographer'>('none');
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isMobile, setIsMobile] = useState(false);
+  const [imagesLoaded, setImagesLoaded] = useState({
+    default: false,
+    coder: false,
+    photographer: false
+  });
   const containerRef = useRef<HTMLDivElement>(null);
   const keywordsRef = useRef<HTMLDivElement>(null);
+
+  // Check if all images are loaded
+  const allImagesLoaded = Object.values(imagesLoaded).every(loaded => loaded);
+
+  // Preload images
+  useEffect(() => {
+    const loadImage = (src: string, key: keyof typeof imagesLoaded) => {
+      const img = new Image();
+      img.src = src;
+      img.onload = () => {
+        setImagesLoaded(prev => ({
+          ...prev,
+          [key]: true
+        }));
+      };
+      img.onerror = () => {
+        console.error(`Failed to load image: ${src}`);
+        // Still mark as loaded to prevent infinite loading state
+        setImagesLoaded(prev => ({
+          ...prev,
+          [key]: true
+        }));
+      };
+    };
+
+    loadImage(defaultImage, 'default');
+    loadImage(coderImage, 'coder');
+    loadImage(photographerImage, 'photographer');
+  }, []);
 
   // Check if device is mobile on mount and window resize
   useEffect(() => {
@@ -85,9 +119,20 @@ const ProfileSection = () => {
     setHoverState(prevState => prevState === type ? 'none' : type);
   };
 
+  if (!allImagesLoaded) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-black">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-gold border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gold text-lg">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div 
-      className="relative h-screen flex items-center justify-center overflow-hidden pt-32"
+      className="relative h-screen flex items-center justify-center overflow-hidden pt-32 animate-fade-in"
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
