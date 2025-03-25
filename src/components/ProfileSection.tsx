@@ -259,7 +259,7 @@ const ProfileSection = () => {
 
       {/* Navigation arrows - Only visible on desktop and when hovering on respective sides */}
       <div 
-        className={`hidden md:flex absolute left-0 inset-y-0 w-1/4 items-center justify-start pl-8 z-30 transition-opacity duration-300 ${
+        className={`hidden md:flex absolute left-0 inset-y-0 w-1/4 items-center justify-start pl-8 z-20 transition-opacity duration-300 ${
           hoverState === 'coder' ? 'opacity-100' : 'opacity-0'
         }`}
         onClick={navigateToProjects}
@@ -276,7 +276,7 @@ const ProfileSection = () => {
       </div>
 
       <div 
-        className={`hidden md:flex absolute right-0 inset-y-0 w-1/4 items-center justify-end pr-8 z-30 transition-opacity duration-300 ${
+        className={`hidden md:flex absolute right-0 inset-y-0 w-1/4 items-center justify-end pr-8 z-20 transition-opacity duration-300 ${
           hoverState === 'photographer' ? 'opacity-100' : 'opacity-0'
         }`}
         onClick={navigateToGallery}
