@@ -9,6 +9,11 @@ const ProfileSection = () => {
   const [hoverState, setHoverState] = useState<'none' | 'coder' | 'photographer'>('none');
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isMobile, setIsMobile] = useState(false);
+  const [showHint, setShowHint] = useState(true);
+  const [clickedStates, setClickedStates] = useState({
+    coder: false,
+    photographer: false
+  });
   const [imagesLoaded, setImagesLoaded] = useState({
     default: false,
     coder: false,
@@ -19,6 +24,26 @@ const ProfileSection = () => {
 
   // Check if all images are loaded
   const allImagesLoaded = Object.values(imagesLoaded).every(loaded => loaded);
+
+  // Handle mobile indicator clicks
+  const handleIndicatorClick = (type: 'coder' | 'photographer') => {
+    if (!isMobile) return;
+    
+    setHoverState(prevState => prevState === type ? 'none' : type);
+    
+    // Track that this indicator has been clicked
+    setClickedStates(prev => ({
+      ...prev,
+      [type]: true
+    }));
+  };
+
+  // Hide hint when both indicators have been clicked
+  useEffect(() => {
+    if (clickedStates.coder && clickedStates.photographer) {
+      setShowHint(false);
+    }
+  }, [clickedStates]);
 
   // Preload images
   useEffect(() => {
@@ -112,13 +137,6 @@ const ProfileSection = () => {
     }
   };
 
-  // Handle mobile indicator clicks
-  const handleIndicatorClick = (type: 'coder' | 'photographer') => {
-    if (!isMobile) return;
-    
-    setHoverState(prevState => prevState === type ? 'none' : type);
-  };
-
   if (!allImagesLoaded) {
     return (
       <div className="h-screen flex items-center justify-center bg-black">
@@ -187,22 +205,40 @@ const ProfileSection = () => {
         {/* Overlay */}
         <div className="absolute inset-0 bg-black  bg-opacity-5 rounded-2xl -z-10 backdrop-blur-lg"></div>
         
-        {/* Left/Right indicators */}
+        {/* Mobile Hint Text - Only visible on mobile */}
+        {isMobile && showHint && (
+          <div className="absolute -top-24 left-1/2 -translate-x-1/2 text-gold text-sm text-center animate-fade-in">
+            <p className="mb-2">👆 Tap "Coder" or "Photographer" to switch views</p>
+            <div className="w-2 h-2 bg-gold rounded-full mx-auto animate-bounce"></div>
+          </div>
+        )}
+        
+        {/* Left/Right indicators with enhanced mobile styling */}
         <div 
-          className={`absolute md:top-1/4 md:-left-32 -top-12 text-white text-opacity-70 font-bold text-2xl transition-opacity duration-500 z-20 ${
+          className={`absolute md:top-1/4 md:-left-32 -top-12 left-4 text-white text-opacity-70 font-bold text-2xl transition-all duration-500 z-20 ${
             hoverState === 'coder' ? 'opacity-100' : 'opacity-50'
-          } ${isMobile ? 'cursor-pointer' : ''}`}
+          } ${isMobile ? 'cursor-pointer transform hover:scale-110 active:scale-95' : ''}`}
           onClick={() => handleIndicatorClick('coder')}
         >
-          Coder
+          <span className="relative">
+            Coder
+            {isMobile && hoverState !== 'coder' && !(clickedStates.coder && clickedStates.photographer) && (
+              <span className="absolute -inset-2 border-2 border-gold opacity-75 rounded-lg animate-ping"></span>
+            )}
+          </span>
         </div>
         <div 
-          className={`absolute md:top-1/4 right-0 -top-12 md:-right-44 text-white text-opacity-70 font-bold text-2xl transition-opacity duration-500 z-20 ${
+          className={`absolute md:top-1/4 right-4 -top-12 md:-right-44 text-white text-opacity-70 font-bold text-2xl transition-all duration-500 z-20 ${
             hoverState === 'photographer' ? 'opacity-100' : 'opacity-50'
-          } ${isMobile ? 'cursor-pointer' : ''}`}
+          } ${isMobile ? 'cursor-pointer transform hover:scale-110 active:scale-95' : ''}`}
           onClick={() => handleIndicatorClick('photographer')}
         >
-          Photographer
+          <span className="relative">
+            Photographer
+            {isMobile && hoverState !== 'photographer' && !(clickedStates.coder && clickedStates.photographer) && (
+              <span className="absolute -inset-2 border-2 border-gold opacity-75 rounded-lg animate-ping"></span>
+            )}
+          </span>
         </div>
       </div>
 
@@ -296,13 +332,21 @@ const ProfileSection = () => {
       <div className="md:hidden fixed bottom-0 left-0 right-0 flex justify-between p-4 bg-black bg-opacity-50 backdrop-blur-sm z-40">
         <button 
           onClick={navigateToProjects}
-          className="px-6 py-2 text-gold border border-gold rounded-full hover:bg-gold hover:bg-opacity-10 transition-all duration-300"
+          className={`px-6 py-2 text-gold border border-gold rounded-full transition-all duration-500 ${
+            hoverState === 'coder' 
+              ? 'scale-110 shadow-lg shadow-gold/30 border-opacity-100 bg-gold bg-opacity-10' 
+              : 'hover:bg-gold hover:bg-opacity-10 border-opacity-50'
+          }`}
         >
           Projects
         </button>
         <button 
           onClick={navigateToGallery}
-          className="px-6 py-2 text-gold border border-gold rounded-full hover:bg-gold hover:bg-opacity-10 transition-all duration-300"
+          className={`px-6 py-2 text-gold border border-gold rounded-full transition-all duration-500 ${
+            hoverState === 'photographer' 
+              ? 'scale-110 shadow-lg shadow-gold/30 border-opacity-100 bg-gold bg-opacity-10' 
+              : 'hover:bg-gold hover:bg-opacity-10 border-opacity-50'
+          }`}
         >
           Gallery
         </button>
