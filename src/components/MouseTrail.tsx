@@ -5,8 +5,8 @@ interface TrailSegment {
   ref: React.RefObject<HTMLDivElement>;
 }
 
-const TRAIL_LENGTH = 8; // Reduced from 12 to 8
-const TRAIL_DELAY = 0.08; // Increased from 0.05 to 0.08
+const TRAIL_LENGTH = 20; // Increased from 12 to 20 for longer trail
+const TRAIL_DELAY = 0.04; // Decreased for snappier movement
 const CURSOR_SIZE = {
   default: 25,
   hover: 40,
@@ -102,7 +102,7 @@ const MouseTrail = () => {
         gsap.to(cursorRef.current, {
           x: mousePosition.current.x - scrollX,
           y: mousePosition.current.y - scrollY,
-          duration: 0.2, // Reduced from 0.8
+          duration: 0.8, // Reduced from 0.8
           ease: "power2.out"
         });
       }
@@ -175,10 +175,10 @@ const MouseTrail = () => {
         gsap.to(segment.ref.current, {
           x: mousePosition.current.x - scrollX,
           y: mousePosition.current.y - scrollY,
-          duration: 0.2, // Reduced from 0.3
+          duration: 0.2,
           delay,
-          opacity: (isMoving || isMouseDown) ? progress * 0.4 : 0, // Reduced opacity
-          scale: isMouseDown ? 1.1 - progress * 0.3 : 1 - progress * 0.2, // Reduced scale effect
+          opacity: (isMoving || isMouseDown) ? progress * 0.8 : 0, // Increased opacity from 0.4 to 0.8
+          scale: isMouseDown ? 1.5 - progress * 0.5 : 1.2 - progress * 0.3, // Enhanced scale effect
           ease: "power2.out"
         });
       });
@@ -210,10 +210,10 @@ const MouseTrail = () => {
         <div
           key={index}
           ref={segment.ref}
-          className="fixed w-2 h-2 rounded-full bg-gold pointer-events-none z-40 opacity-0"
+          className="fixed w-3 h-3 rounded-full bg-gold pointer-events-none z-40 opacity-0"
           style={{
             transform: 'translate(-50%, -50%)',
-            backgroundColor: 'rgba(212, 175, 55, 0.3)'
+            backgroundColor: 'rgba(212, 175, 55, 0.5)'
           }}
         />
       ))}

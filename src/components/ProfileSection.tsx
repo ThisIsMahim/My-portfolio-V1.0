@@ -205,13 +205,6 @@ const ProfileSection = () => {
         {/* Overlay */}
         <div className="absolute inset-0 bg-black  bg-opacity-5 rounded-2xl -z-10 backdrop-blur-lg"></div>
         
-        {/* Mobile Hint Text - Only visible on mobile */}
-        {isMobile && showHint && (
-          <div className="absolute -top-24 left-1/2 -translate-x-1/2 text-gold text-sm text-center animate-fade-in">
-            <p className="mb-2">👆 Tap "Coder" or "Photographer" to switch views</p>
-            <div className="w-2 h-2 bg-gold rounded-full mx-auto animate-bounce"></div>
-          </div>
-        )}
         
         {/* Left/Right indicators with enhanced mobile styling */}
         <div 
