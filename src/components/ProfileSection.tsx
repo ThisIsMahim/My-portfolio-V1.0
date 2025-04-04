@@ -286,40 +286,52 @@ const ProfileSection = () => {
         ))}
       </div>
 
-      {/* Navigation arrows - Only visible on desktop and when hovering on respective sides */}
-      <div 
-        className={`hidden md:flex absolute left-0 inset-y-0 w-1/4 items-center justify-start pl-8 z-20 transition-opacity duration-300 ${
-          hoverState === 'coder' ? 'opacity-100' : 'opacity-0'
-        }`}
+      {/* Navigation text and overlay - Only visible on desktop and when hovering on respective sides */}
+      <button 
+        className={`hidden md:block absolute hover:cursor-pointer hoverable left-0 inset-y-0 w-1/4 z-20 transition-all duration-300 
+          ${hoverState === 'coder' ? 'opacity-100' : 'opacity-0'}`}
         onClick={navigateToProjects}
       >
-        <div className="cursor-pointer group transform transition-transform duration-300 hover:scale-110">
-          <div className="relative w-12 h-20 bg-gold bg-opacity-5 rounded-full border border-gold border-opacity-20 flex items-center justify-center overflow-hidden group-hover:border-opacity-50 group-hover:bg-opacity-10 transition-all duration-300">
-            <div className="absolute inset-0 bg-gradient-to-r from-gold to-transparent opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-            <span className="text-gold text-2xl transform group-hover:scale-110 transition-transform duration-300">←</span>
+        <div className="relative h-full w-full group">
+          {/* Golden gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-gold/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          
+          {/* Large default arrow */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-100 group-hover:opacity-0 transition-opacity duration-300">
+            <span className="text-gold/30 text-[8rem] font-thin transform -translate-x-4">←</span>
           </div>
-          <span className="absolute left-20 top-1/2 -translate-y-1/2 text-gold opacity-0 group-hover:opacity-100 transition-all duration-300">
-            Projects
-          </span>
-        </div>
-      </div>
 
-      <div 
-        className={`hidden md:flex absolute right-0 inset-y-0 w-1/4 items-center justify-end pr-8 z-20 transition-opacity duration-300 ${
-          hoverState === 'photographer' ? 'opacity-100' : 'opacity-0'
-        }`}
+          {/* Projects text */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform -rotate-90 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <span className="text-gold text-6xl font-light tracking-widest">
+              PROJECTS
+            </span>
+          </div>
+        </div>
+      </button>
+
+      <button 
+        className={`hidden md:block absolute hover:cursor-pointer hoverable right-0 inset-y-0 w-1/4 z-20 transition-all duration-300 
+          ${hoverState === 'photographer' ? 'opacity-100' : 'opacity-0'} `}
         onClick={navigateToGallery}
       >
-        <div className="cursor-pointer group transform transition-transform duration-300 hover:scale-110">
-          <div className="relative w-12 h-20 bg-gold bg-opacity-5 rounded-full border border-gold border-opacity-20 flex items-center justify-center overflow-hidden group-hover:border-opacity-50 group-hover:bg-opacity-10 transition-all duration-300">
-            <div className="absolute inset-0 bg-gradient-to-l from-gold to-transparent opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-            <span className="text-gold text-2xl transform group-hover:scale-110 transition-transform duration-300">→</span>
+        <div className="relative h-full w-full group">
+          {/* Golden gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-l from-gold/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          
+          {/* Large default arrow */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-100 group-hover:opacity-0 transition-opacity duration-300">
+            <span className="text-gold/30 text-[8rem] font-thin transform translate-x-4">→</span>
           </div>
-          <span className="absolute right-20 top-1/2 -translate-y-1/2 text-gold opacity-0 group-hover:opacity-100 transition-all duration-300">
-            Gallery
-          </span>
+
+          {/* Gallery text */}
+          <div className="absolute top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2 transform rotate-90 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <span className="text-gold text-6xl font-light tracking-widest">
+              GALLERY
+            </span>
+          </div>
         </div>
-      </div>
+      </button>
 
       {/* Mobile Navigation - Only visible on mobile devices */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 flex justify-between p-4 bg-transparent  z-40">
