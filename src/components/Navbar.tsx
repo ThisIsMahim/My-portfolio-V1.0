@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Download, ArrowRight, ChevronDown } from 'lucide-react';
+import { Download, ArrowRight, Menu, X } from 'lucide-react';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -30,10 +30,11 @@ const Navbar = () => {
           className="md:hidden flex items-center text-gold hover:opacity-80 transition-opacity"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
-          <ChevronDown 
-            size={24} 
-            className={`transform transition-transform duration-300 ${mobileMenuOpen ? 'rotate-180' : ''}`}
-          />
+          {mobileMenuOpen ? (
+            <X size={24} />
+          ) : (
+            <Menu size={24} />
+          )}
         </button>
 
         <Link to="/" className="flex flex-col items-center group">

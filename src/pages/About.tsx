@@ -6,7 +6,6 @@ import { ChevronLeft } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import MouseTrail from '@/components/MouseTrail';
 import { AnimatedBackground } from '@/components/AnimatedBackground';
-import CircularProgress from '@/components/CircularProgress';
 
 interface Skill {
   name: string;
@@ -95,91 +94,61 @@ const About = () => {
             </p>
           </motion.div>
 
-          {/* Education Section */}
+          {/* Education Section - Optimized */}
           <div className="mb-16">
             <h2 className="text-3xl font-bold text-gold mb-8">Education</h2>
-            <div className="space-y-8">
-              {education.map((edu, index) => (
-                <motion.div
+            <div className="space-y-6">
+              {education.map((edu) => (
+                <div
                   key={edu.degree}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={controls}
-                  variants={{
-                    visible: {
-                      opacity: 1,
-                      y: 0,
-                      transition: {
-                        duration: 0.5,
-                        delay: index * 0.2,
-                      },
-                    },
-                  }}
-                  className="group relative border-l-2 border-gold pl-8 py-4 hover:scale-[1.02] transition-transform"
+                  className="border-l-2 border-gold pl-6 py-3 hover:pl-8 transition-all duration-300"
                 >
-                  <div className="absolute -left-2.5 top-5 h-5 w-5 rounded-full bg-gold" />
-                  <h3 className="text-white text-xl font-bold mt-1 group-hover:text-gold transition-colors">
+                  <h3 className="text-white text-xl font-bold mt-1 hover:text-gold transition-colors">
                     {edu.degree}
                   </h3>
                   <p className="text-gray-400 mt-2">{edu.institution}</p>
                   <p className="text-gray-400">{edu.duration}</p>
                   <p className="text-gold mt-1">{edu.gpa}</p>
-                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gold/0 group-hover:bg-gold/50 transition-all duration-300" />
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
 
-          {/* Entrepreneurship Section */}
+          {/* Entrepreneurship Section - Optimized */}
           <div className="mb-16">
             <h2 className="text-3xl font-bold text-gold mb-8">Entrepreneurship</h2>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={controls}
-              variants={{
-                visible: {
-                  opacity: 1,
-                  y: 0,
-                  transition: { duration: 0.5 },
-                },
-              }}
-              className="group relative border-l-2 border-gold pl-8 py-4 hover:scale-[1.02] transition-transform"
+            <div
+              className="border-l-2 border-gold pl-6 py-3 hover:pl-8 transition-all duration-300"
             >
-              <div className="absolute -left-2.5 top-5 h-5 w-5 rounded-full bg-gold" />
-              <h3 className="text-white text-xl font-bold mt-1 group-hover:text-gold transition-colors">
+              <h3 className="text-white text-xl font-bold mt-1 hover:text-gold transition-colors">
                 Co-founder - Flan BD
               </h3>
               <p className="text-gray-400 mt-2">
                 Co-founded and managing an innovative online gift shop, bringing unique and personalized gifting experiences to customers.
               </p>
-              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gold/0 group-hover:bg-gold/50 transition-all duration-300" />
-            </motion.div>
+            </div>
           </div>
 
-          
-          {/* Skills Section */}
+          {/* Skills Section - Minimal & Efficient */}
           <div className="mb-16" ref={ref}>
             <h2 className="text-3xl font-bold text-gold mb-8">Skills</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
-              {skills.map((skill, index) => (
-                <motion.div
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {skills.map((skill) => (
+                <div
                   key={skill.name}
-                  initial="hidden"
-                  animate={controls}
-                  variants={{
-                    hidden: { opacity: 0, scale: 0.8 },
-                    visible: {
-                      opacity: 1,
-                      scale: 1,
-                      transition: {
-                        duration: 0.5,
-                        delay: index * 0.1,
-                      },
-                    },
-                  }}
-                  className="flex justify-center"
+                  className="relative p-4 border border-gold/20 rounded-lg hover:border-gold/50 transition-colors"
                 >
-                  <CircularProgress skill={skill.name} percentage={skill.percentage} />
-                </motion.div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-white">{skill.name}</span>
+                    <span className="text-gold">{skill.percentage}%</span>
+                  </div>
+                  <div className="mt-2 h-1 bg-gold/20 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-gold transition-all duration-1000"
+                      style={{ width: `${skill.percentage}%` }}
+                    />
+                  </div>
+                </div>
               ))}
             </div>
           </div>

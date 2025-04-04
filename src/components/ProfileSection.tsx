@@ -322,7 +322,7 @@ const ProfileSection = () => {
       </div>
 
       {/* Mobile Navigation - Only visible on mobile devices */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 flex justify-between p-4 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 flex justify-between p-4 bg-transparent  z-40">
         <button 
           onClick={navigateToProjects}
           className={`px-6 py-2 text-gold border border-gold rounded-full transition-all duration-500 ${
