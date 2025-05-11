@@ -94,20 +94,46 @@ const ProfileSection = () => {
     window.location.href = '/gallery';
   };
 
-  // Coder keywords with positions
-  const coderKeywords = [
-    { text: 'Programmer', x: -150, y: -100 },
+  // Use the current positions as mobile
+  const coderKeywordsMobile = [
+    { text: 'Programmer', x: -140, y: -100 },
     { text: 'Frontend Developer', x: -180, y: 50 },
     { text: 'React.js', x: -120, y: 150 },
     { text: 'Tailwind CSS', x: -200, y: 200 },
+    { text: 'Web Designer', x: 150, y: -100 },
+    { text: 'UI/UX Developer', x: -180, y: -10 },
+    { text: 'TypeScript', x: 120, y: 0 },
+    { text: 'Three.js', x: 200, y: 50 },
+    { text: 'Node.js', x: 150, y: 100 },
+    { text: 'GSAP', x: 180, y: 150 },
+  ];
+  const photographerKeywordsMobile = [
+    { text: 'Photographer', x: 110, y: -100 },
+    { text: 'Designer', x: 130, y: -50 },
+    { text: 'Creative', x: 120, y: 0 },
+    { text: 'Visual Artist', x: -110, y: -100 },
+    { text: 'Photo Editor', x: -150, y: -50 },
+    { text: 'Digital Artist', x: -150, y: 0 },
+    { text: 'Videographer', x: 150, y: 50 },
+    { text: 'Video Editor', x: -150, y: 50 },
   ];
 
-  // Photographer keywords with positions
-  const photographerKeywords = [
-    { text: 'Photographer', x: 150, y: -100 },
-    { text: 'Designer', x: 180, y: 50 },
-    { text: 'Creative', x: 120, y: 150 },
-  ];
+  // For desktop, spread out by multiplying x/y by 2.2
+  const spreadFactor = 1.2;
+  const coderKeywordsDesktop = coderKeywordsMobile.map(k => ({
+    ...k,
+    x: k.x * spreadFactor,
+    y: k.y * spreadFactor
+  }));
+  const photographerKeywordsDesktop = photographerKeywordsMobile.map(k => ({
+    ...k,
+    x: k.x * spreadFactor,
+    y: k.y * spreadFactor
+  }));
+
+  // Choose the correct set based on isMobile
+  const coderKeywords = isMobile ? coderKeywordsMobile : coderKeywordsDesktop;
+  const photographerKeywords = isMobile ? photographerKeywordsMobile : photographerKeywordsDesktop;
 
   // Handler for mouse movement inside the container
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -174,7 +200,7 @@ const ProfileSection = () => {
       />
 
       {/* Profile image container */}
-      <div className="relative w-[320px] h-[400px] md:w-[400px] md:h-[500px] overflow-none rounded-2xl shadow-2xl z-10">
+      <div className="relative w-[320px] h-[400px] md:w-[400px] md:h-[500px] 2xl:w-[500px] 2xl:h-[600px]  overflow-none rounded-2xl z-10">
         {/* Default image */}
         <img
           src={defaultImage}

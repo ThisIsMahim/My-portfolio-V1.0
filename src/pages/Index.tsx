@@ -4,9 +4,11 @@ import Navbar from '../components/Navbar';
 import ProfileSection from '../components/ProfileSection';
 import MouseTrail from '../components/MouseTrail';
 import { AnimatedBackground } from '../components/AnimatedBackground';
+import TutorialModal from '../components/TutorialModal';
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [showTutorial, setShowTutorial] = useState(true);
 
   useEffect(() => {
     // Simulate loading of resources
@@ -37,6 +39,7 @@ const Index = () => {
         <main className="relative">
           <ProfileSection />
         </main>
+        {showTutorial && <TutorialModal onClose={() => setShowTutorial(false)} />}
       </div>
     </AnimatedBackground>
   );
