@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import GalleryItem from '../components/GalleryItem';
-import MouseTrail from '../components/MouseTrail';
 import { ChevronLeft, X } from 'lucide-react';
-import { AnimatedBackground } from '../components/AnimatedBackground';
 
 // Mock gallery data - replace with your actual images
 const galleryData = [
@@ -66,15 +65,23 @@ interface SelectedImage {
 
 const GalleryModal = ({ image, onClose }: { image: SelectedImage; onClose: () => void }) => {
   const [modalImageLoaded, setModalImageLoaded] = useState(false);
-  
+
   return (
-    <div 
+    <motion.div
       className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black bg-opacity-80 backdrop-blur-sm"
       onClick={onClose}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
     >
-      <div 
-        className="relative max-w-5xl w-full bg-white bg-opacity-10 backdrop-blur-md p-6 rounded-2xl shadow-2xl transform transition-all duration-300 ease-out"
+      <motion.div
+        className="relative max-w-5xl w-full bg-white bg-opacity-10 backdrop-blur-md p-6 rounded-2xl shadow-2xl"
         onClick={e => e.stopPropagation()}
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        transition={{ type: "spring", damping: 25, stiffness: 300 }}
       >
         <button
           onClick={onClose}
@@ -82,7 +89,7 @@ const GalleryModal = ({ image, onClose }: { image: SelectedImage; onClose: () =>
         >
           <X size={24} />
         </button>
-        
+
         <div className="relative aspect-[16/9] overflow-hidden rounded-lg">
           {!modalImageLoaded && (
             <div className="absolute inset-0 bg-gold/10 animate-pulse rounded-lg" />
@@ -90,29 +97,45 @@ const GalleryModal = ({ image, onClose }: { image: SelectedImage; onClose: () =>
           <img
             src={image.image}
             alt={image.alt}
-            className={`w-full h-full object-contain transition-opacity duration-300 ${
-              modalImageLoaded ? 'opacity-100' : 'opacity-0'
-            }`}
+            className={`w-full h-full object-contain transition-opacity duration-300 ${modalImageLoaded ? 'opacity-100' : 'opacity-0'
+              }`}
             onLoad={() => setModalImageLoaded(true)}
           />
         </div>
-        
+
         <div className="mt-4">
           <h3 className="text-gold text-2xl font-medium">{image.title}</h3>
           <p className="text-gold text-opacity-80 mt-2">{image.alt}</p>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
-const Gallery = () => {
-  const [animate, setAnimate] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<SelectedImage | null>(null);
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  },
+  exit: { opacity: 0 }
+};
 
-  useEffect(() => {
-    setAnimate(true);
-  }, []);
+const itemVariants = {
+  hidden: { opacity: 0, scale: 0.9 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 0.4
+    }
+  }
+};
+
+const Gallery = () => {
+  const [selectedImage, setSelectedImage] = useState<SelectedImage | null>(null);
 
   const handleImageClick = (item: SelectedImage) => {
     setSelectedImage(item);
@@ -123,51 +146,57 @@ const Gallery = () => {
   };
 
   return (
-    <AnimatedBackground>
-      <MouseTrail />
-      <div className="min-h-screen pt-32">
-        <Navbar />
+    <motion.div
+      className="min-h-screen pt-32"
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      variants={containerVariants}
+    >
+      <Navbar />
 
-        <div className={`pt-28 pb-16 px-6 md:px-12 max-w-7xl mx-auto ${animate ? 'animate-fade-in' : 'opacity-0'}`}>
-          <div className="mb-12 flex items-center">
-            <Link 
-              to="/"
-              className="mr-4 h-10 w-10 rounded-full border border-gold border-opacity-40 flex items-center justify-center text-gold hover-gold-glow smooth-transition hoverable"
+      <div className="pt-10 pb-16 px-6 md:px-12 max-w-7xl mx-auto">
+        <motion.div
+          className="mb-12 flex items-center"
+          variants={itemVariants}
+        >
+          <Link
+            to="/"
+            className="mr-4 h-10 w-10 rounded-full border border-gold border-opacity-40 flex items-center justify-center text-gold hover-gold-glow smooth-transition hoverable"
+          >
+            <ChevronLeft size={20} />
+          </Link>
+          <h1 className="text-gold text-3xl font-medium">Gallery</h1>
+        </motion.div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {galleryData.map((item) => (
+            <motion.div
+              key={item.id}
+              className="cursor-pointer"
+              variants={itemVariants}
+              onClick={() => handleImageClick(item)}
+              whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
             >
-              <ChevronLeft size={20} />
-            </Link>
-            <h1 className="text-gold text-3xl font-medium">Gallery</h1>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {galleryData.map((item, index) => (
-              <div 
-                key={item.id}
-                className="opacity-0 cursor-pointer"
-                style={{
-                  animation: 'fade-in 0.5s forwards',
-                  animationDelay: `${0.1 + index * 0.1}s`,
-                }}
-                onClick={() => handleImageClick(item)}
-              >
-                <GalleryItem 
-                  image={item.image}
-                  alt={item.alt}
-                  title={item.title}
-                />
-              </div>
-            ))}
-          </div>
+              <GalleryItem
+                image={item.image}
+                alt={item.alt}
+                title={item.title}
+              />
+            </motion.div>
+          ))}
         </div>
+      </div>
 
+      <AnimatePresence>
         {selectedImage && (
-          <GalleryModal 
-            image={selectedImage} 
+          <GalleryModal
+            image={selectedImage}
             onClose={handleCloseModal}
           />
         )}
-      </div>
-    </AnimatedBackground>
+      </AnimatePresence>
+    </motion.div>
   );
 };
 

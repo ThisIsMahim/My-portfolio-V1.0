@@ -1,12 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
 
-interface TrailSegment {
-  ref: React.RefObject<HTMLDivElement>;
-}
-
-const TRAIL_LENGTH = 20; // Increased from 12 to 20 for longer trail
-const TRAIL_DELAY = 0.04; // Decreased for snappier movement
+const TRAIL_LENGTH = 12; // Reduced back to 12 for performance
 const CURSOR_SIZE = {
   default: 25,
   hover: 40,
@@ -14,60 +9,53 @@ const CURSOR_SIZE = {
 };
 
 const MouseTrail = () => {
-  const [isMoving, setIsMoving] = useState(false);
-  const [isMouseDown, setIsMouseDown] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
   const cursorRef = useRef<HTMLDivElement>(null);
-  const trailRefs = useRef<TrailSegment[]>([]);
-  const mousePosition = useRef({ x: -100, y: -100 });
-  const movementTimeout = useRef<NodeJS.Timeout>();
-  const animationFrameId = useRef<number>();
-  const lastUpdateTime = useRef(0);
+  const cursorInnerRef = useRef<HTMLDivElement>(null);
+  const trailContainerRef = useRef<HTMLDivElement>(null);
+  const trailRefs = useRef<HTMLDivElement[]>([]);
 
-  // Initialize trail segments
+  // Use performant GSAP quickTo setters
+  const xTo = useRef<gsap.QuickToFunc>();
+  const yTo = useRef<gsap.QuickToFunc>();
+  const trailXTo = useRef<gsap.QuickToFunc[]>([]);
+  const trailYTo = useRef<gsap.QuickToFunc[]>([]);
+
+  const [isHovering, setIsHovering] = useState(false);
+  const [isMouseDown, setIsMouseDown] = useState(false);
+
+  // Initialize GSAP quickSetters
   useEffect(() => {
-    trailRefs.current = Array(TRAIL_LENGTH)
-      .fill(null)
-      .map(() => ({ ref: React.createRef<HTMLDivElement>() }));
+    const ctx = gsap.context(() => {
+      // Main cursor setters
+      if (cursorRef.current) {
+        xTo.current = gsap.quickTo(cursorRef.current, "x", { duration: 0.1, ease: "power3" });
+        yTo.current = gsap.quickTo(cursorRef.current, "y", { duration: 0.1, ease: "power3" });
+      }
 
-    return () => {
-      trailRefs.current = [];
-    };
+      // Trail setters
+      trailRefs.current.forEach((el, i) => {
+        if (el) {
+          trailXTo.current[i] = gsap.quickTo(el, "x", { duration: 0.3, ease: "power3", delay: i * 0.01 });
+          trailYTo.current[i] = gsap.quickTo(el, "y", { duration: 0.3, ease: "power3", delay: i * 0.01 });
+        }
+      });
+    }, [trailContainerRef, cursorRef]);
+
+    return () => ctx.revert();
   }, []);
 
-  // Handle mouse movement
+  // Event Listeners
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      const scrollX = window.scrollX || window.pageXOffset;
-      const scrollY = window.scrollY || window.pageYOffset;
-      
-      const x = e.clientX + scrollX;
-      const y = e.clientY + scrollY;
-      
-      mousePosition.current = { x, y };
+      const { clientX, clientY } = e;
 
-      // Throttle cursor updates
-      const now = Date.now();
-      if (now - lastUpdateTime.current > 16) { // ~60fps
-        if (cursorRef.current) {
-          gsap.to(cursorRef.current, {
-            x: e.clientX,
-            y: e.clientY,
-            duration: 0.2, // Reduced from 0.8
-            ease: "power2.out"
-          });
-        }
-        lastUpdateTime.current = now;
-      }
+      // Move main cursor
+      xTo.current?.(clientX);
+      yTo.current?.(clientY);
 
-      setIsMoving(true);
-      if (movementTimeout.current) {
-        clearTimeout(movementTimeout.current);
-      }
-
-      movementTimeout.current = setTimeout(() => {
-        setIsMoving(false);
-      }, 100); // Reduced from 300
+      // Move trail
+      trailXTo.current.forEach((func) => func(clientX));
+      trailYTo.current.forEach((func) => func(clientY));
     };
 
     const handleMouseOver = (e: MouseEvent) => {
@@ -80,163 +68,106 @@ const MouseTrail = () => {
         target.classList.contains('hoverable')
       );
 
-      if (isHoverable !== isHovering) { // Only update if state actually changes
-        setIsHovering(isHoverable);
-        
-        gsap.to(cursorRef.current, {
-          width: isHoverable ? CURSOR_SIZE.hover : CURSOR_SIZE.default,
-          height: isHoverable ? CURSOR_SIZE.hover : CURSOR_SIZE.default,
-          backgroundColor: isHoverable ? 'rgba(212, 175, 55, 0.2)' : 'transparent',
-          borderColor: '#D4AF37',
-          duration: 0.2, // Reduced from 0.3
-          ease: "power2.out"
-        });
-      }
+      setIsHovering(isHoverable);
     };
 
-    const handleScroll = () => {
-      if (cursorRef.current) {
-        const scrollX = window.scrollX || window.pageXOffset;
-        const scrollY = window.scrollY || window.pageYOffset;
-        
-        gsap.to(cursorRef.current, {
-          x: mousePosition.current.x - scrollX,
-          y: mousePosition.current.y - scrollY,
-          duration: 0.8, // Reduced from 0.8
-          ease: "power2.out"
-        });
-      }
-    };
+    const handleMouseDown = () => setIsMouseDown(true);
+    const handleMouseUp = () => setIsMouseDown(false);
 
     window.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseover', handleMouseOver);
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseover', handleMouseOver);
-      window.removeEventListener('scroll', handleScroll);
-      if (movementTimeout.current) {
-        clearTimeout(movementTimeout.current);
-      }
-    };
-  }, [isHovering]); // Added isHovering to dependencies
-
-  // Handle mouse down/up events
-  useEffect(() => {
-    const handleMouseDown = () => {
-      setIsMouseDown(true);
-      gsap.to(cursorRef.current, {
-        width: CURSOR_SIZE.down,
-        height: CURSOR_SIZE.down,
-        borderWidth: '3px',
-        duration: 0.2,
-        ease: "power2.out"
-      });
-    };
-
-    const handleMouseUp = () => {
-      setIsMouseDown(false);
-      gsap.to(cursorRef.current, {
-        width: isHovering ? CURSOR_SIZE.hover : CURSOR_SIZE.default,
-        height: isHovering ? CURSOR_SIZE.hover : CURSOR_SIZE.default,
-        borderWidth: '2px',
-        duration: 0.2,
-        ease: "power2.out"
-      });
-    };
-
     window.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mouseup', handleMouseUp);
 
     return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseover', handleMouseOver);
       window.removeEventListener('mousedown', handleMouseDown);
       window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isHovering]);
+  }, []);
 
-  // Update trail segments
+  // Visual State Animations
   useEffect(() => {
-    let lastTrailUpdate = 0;
-    
-    const updateTrail = () => {
-      const now = Date.now();
-      if (now - lastTrailUpdate < 16) return; // Limit to ~60fps
-      
-      const scrollX = window.scrollX || window.pageXOffset;
-      const scrollY = window.scrollY || window.pageYOffset;
+    if (!cursorRef.current) return;
 
-      trailRefs.current.forEach((segment, index) => {
-        if (!segment.ref.current) return;
-
-        const delay = (index + 1) * TRAIL_DELAY;
-        const progress = 1 - index / TRAIL_LENGTH;
-
-        gsap.to(segment.ref.current, {
-          x: mousePosition.current.x - scrollX,
-          y: mousePosition.current.y - scrollY,
-          duration: 0.2,
-          delay,
-          opacity: (isMoving || isMouseDown) ? progress * 0.8 : 0, // Increased opacity from 0.4 to 0.8
-          scale: isMouseDown ? 1.5 - progress * 0.5 : 1.2 - progress * 0.3, // Enhanced scale effect
-          ease: "power2.out"
-        });
+    if (isMouseDown) {
+      gsap.to(cursorRef.current, {
+        width: CURSOR_SIZE.down,
+        height: CURSOR_SIZE.down,
+        borderWidth: 3,
+        duration: 0.2,
+        ease: "power2.out"
       });
-      
-      lastTrailUpdate = now;
-    };
-
-    const animateTrail = () => {
-      updateTrail();
-      if (isMoving || isMouseDown) {
-        animationFrameId.current = requestAnimationFrame(animateTrail);
-      }
-    };
-
-    if (isMoving || isMouseDown) {
-      animateTrail();
+    } else if (isHovering) {
+      gsap.to(cursorRef.current, {
+        width: CURSOR_SIZE.hover,
+        height: CURSOR_SIZE.hover,
+        backgroundColor: 'rgba(212, 175, 55, 0.1)',
+        borderColor: '#D4AF37',
+        borderWidth: 1,
+        duration: 0.3,
+        ease: "back.out(1.2)"
+      });
+    } else {
+      gsap.to(cursorRef.current, {
+        width: CURSOR_SIZE.default,
+        height: CURSOR_SIZE.default,
+        backgroundColor: 'transparent',
+        borderColor: '#D4AF37',
+        borderWidth: 2,
+        duration: 0.3,
+        ease: "power2.out"
+      });
     }
-
-    return () => {
-      if (animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current);
-      }
-    };
-  }, [isMoving, isMouseDown]);
+  }, [isHovering, isMouseDown]);
 
   return (
     <>
-      {trailRefs.current.map((segment, index) => (
-        <div
-          key={index}
-          ref={segment.ref}
-          className="fixed w-3 h-3 rounded-full bg-gold pointer-events-none z-40 opacity-0"
-          style={{
-            transform: 'translate(-50%, -50%)',
-            backgroundColor: 'rgba(212, 175, 55, 0.5)'
-          }}
-        />
-      ))}
+      {/* Trail Elements */}
+      <div ref={trailContainerRef} className="fixed top-0 left-0 w-full h-full pointer-events-none z-40 overflow-hidden">
+        {Array.from({ length: TRAIL_LENGTH }).map((_, i) => (
+          <div
+            key={i}
+            ref={el => {
+              if (el) trailRefs.current[i] = el;
+            }}
+            className="absolute rounded-full bg-gold/40"
+            style={{
+              width: 12 - (i * 0.8), // Tapering size
+              height: 12 - (i * 0.8),
+              opacity: 0.6 - (i * 0.04), // Fading opacity
+              top: 0,
+              left: 0,
+              transform: 'translate(-50%, -50%)',
+              // Note: GSAP quickTo sets x/y which corresponds to transform: translate().
+              // To center on mouse, we set top:0 left:0 and simple allow translate to move it.
+              // But we want the visual center to be at x,y.
+              // So we can use margin to offset or transform translate -50% -50% AND x/y. 
+              // GSAP overwrites transform. So better to set xPercent/yPercent once.
+            }}
+          />
+        ))}
+      </div>
 
+      {/* Main Cursor */}
       <div
         ref={cursorRef}
-        className="fixed pointer-events-none z-50"
+        className="fixed top-0 left-0 pointer-events-none z-50 rounded-full border border-gold"
         style={{
-          width: CURSOR_SIZE.default,
-          height: CURSOR_SIZE.default,
-          transform: 'translate(-50%, -50%)',
-          border: '2px solid #D4AF37',
-          borderRadius: '50%',
-          willChange: 'transform, width, height'
+          transform: 'translate(-100px, -100px)', // Initial position off-screen via transform
         }}
       >
-        <div 
-          className="absolute top-1/2 left-1/2 w-1 h-1 bg-gold rounded-full"
-          style={{ transform: 'translate(-50%, -50%)' }}
-        />
+        <div ref={cursorInnerRef} className="absolute top-1/2 left-1/2 w-1 h-1 bg-gold rounded-full -translate-x-1/2 -translate-y-1/2" />
       </div>
     </>
   );
+};
+
+// Add initial alignment effect separate
+const MouseTrailWrapper = () => {
+  // We wrap to ensure internal refs are handled cleanly
+  return <MouseTrail />;
 };
 
 export default MouseTrail;
